@@ -20,12 +20,7 @@ Contoh: “/petshop/cat/joni.jpg”.
 Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg”.
 Di setiap folder buatlah sebuah file "keterangan.txt" yang berisi nama dan umur semua peliharaan dalam folder tersebut. Format harus sesuai contoh.
 
-nama : joni
-umur  : 3 tahun
-
-nama : miko
-umur  : 2 tahun
-
+![image](https://user-images.githubusercontent.com/74168801/114872050-20215a00-9e24-11eb-9a2a-0e07163bf365.png)
 
 Loba sangat mengapresiasi bantuanmu, minggu depan ia akan mentraktir makan malam!
 
