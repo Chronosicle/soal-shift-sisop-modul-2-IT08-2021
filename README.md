@@ -31,6 +31,25 @@ wget --no-check-certificate "https://drive.google.com/uc?id=ID-FILE&export=downl
 Wget --no-check-certificate "https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download" -O Musik_for_Stevany.zip
 ```
 
+# Proses Pengerjaan
+* Pertama, kita deklarasi 
+```C
+struct tm ultah = {0, 22, 22, 9, 3, 121};
+    time_t ulangtahun = mktime(&ultah);
+    pid_t pid, sid;
+    char musik[10] = "Musyik";
+    char film[10] = "Fylm";
+    char foto[10] = "Pyoto";
+    char link_film[150] = "https://drive.google.com/u/0/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download";
+    char link_musik[200] = "https://drive.google.com/u/0/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download";
+    char link_foto[150] = "https://drive.google.com/u/0/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download";
+    char hasil1[10] = "MUSIK.zip";
+    char hasil2[10] = "FILM.zip";
+    char hasil3[10] = "FOTO.zip";
+```
+
+* 
+
 
 # soal2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
