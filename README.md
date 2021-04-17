@@ -1,6 +1,22 @@
 # soal-shift-sisop-modul-2-IT08-2021
 
-# soal1
+#
+
+1. Tri Rizki Yuliawan (05311940000024)
+2. Tera Nurwahyu Pratama (05311940000039)
+3. Justin Alfonsius Sitanggang (05311840000043)
+
+#
+
+#
+
+1. [Soal1](#soal1)
+2. [Soal2](#soal2)
+3. [Soal3](#soal3)
+
+#
+
+# Soal1
 
 Pada suatu masa, hiduplah seorang Steven yang hidupnya pas-pasan. Steven punya pacar, namun sudah putus sebelum pacaran. Ketika dia galau memikirkan mantan, ia selalu menonton https://www.youtube.com/watch?v=568DH_9CMKI untuk menghilangkan kesedihannya.
 
@@ -249,7 +265,7 @@ void hapus(){
   <br>
   <img src="Dokumentasi/soal 1/6.png">
 
-# soal2
+# Soal2
 
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
 
@@ -547,7 +563,7 @@ nama: ava
 umur: 6
 ```
 
-# soal3
+# Soal3
 
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program.
 
