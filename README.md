@@ -232,22 +232,22 @@ void hapus(){
 
 - pertama kita compile dan run soal1.c
   <br>
-  <img src="soal1/1.png">
+  <img src="Dokumentasi/soal 1/1.png">
 - tampilan awal
   <br>
-  <img src="soal1/2.png">
+  <img src="Dokumentasi/soal 1/2.png">
 - Lalu kita set waktu linux kita ke tanggal 9 April 2021 jam 16:21:59 WIB
   <br>
-  <img src="soal1/3.png">
+  <img src="Dokumentasi/soal 1/3.png">
 - Program berjalan dan berikut adalah hasil tampilan foldernya
   <br>
-  <img src="soal1/4.png">
+  <img src="Dokumentasi/soal 1/4.png">
 - Setelah itu kita set waktu linux kita ke tanggal yang sama tapi jam 22:21:59 WIB
   <br>
-  <img src="soal1/5.png">
+  <img src="Dokumentasi/soal 1/5.png">
 - Program berhasil berjalan dan berikut adalah hasil tampilan terbaru
   <br>
-  <img src="soal1/6.png">
+  <img src="Dokumentasi/soal 1/6.png">
 
 # soal2
 
@@ -469,19 +469,19 @@ void check(char *source){
 
 - Tampilan awal list folder
   <br>
-  <img src="soal2/1.png">
+  <img src="Dokumentasi/Soal 2/1.png">
 
 - Compile dan Run program soal2.c
   <br>
-  <img src="soal2/2.png">
+  <img src="Dokumentasi/Soal 2/2.png">
 
 - hasil extract dari pets.zip ke folder petshop. Sekaligus membuat folder sesuai dengan jenis hewan yang ada
   <br>
-  <img src="soal2/3.png">
+  <img src="Dokumentasi/Soal 2/3.png">
 
 - Tampilan list folder dari petshop
   <br>
-  <img src="soal2/4.png">
+  <img src="Dokumentasi/Soal 2/4.png">
 
 - Isi dari keterangan.txt dari folder petshop/cat
 
@@ -562,3 +562,184 @@ Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang
 - Tidak boleh menggunakan system() dan mkdir()
 - Program utama merupakan SEBUAH PROGRAM C
 - Wajib memuat algoritma Caesar Cipher pada program utama yang dibuat
+
+# Proses Pengerjaan Soal 3
+
+- Untuk menerima argumen, digunakan parameter di fungsi main, dalam bentuk argc (untuk mengetahui berapa banyak argumen), dan array argv yang berisi argumen yang dipassing. Jika argumen yang diinginkan berupa -z dan -x, artinya huruf z dan x berada pada array argv[1][1] karena di argumen kedua dan karakter kedua (zero indexing). kemudian untuk membedakan mode z dan mode x, di mana mode z langsung berhenti tanpa menyelesaikan pekerjaannya dulu, diberi variable mode yang bernilai 1 dalam while(1), agar jika kondisi tersebut terpenuhi dapat langsung memberikan s inyal hangup dengan SIGHUP dengan bantuan fungsi prctl.
+
+```C
+int main(int argc, char* argv[]) {
+	if (argc != 2) {
+		printf("Program hanya bisa dijalankan dengan mode z atau mode x!\n");
+		exit(EXIT_FAILURE);
+	}
+	int mode;
+	if (argv[1][1] == 'z') mode = 1;
+	else if (argv[1][1] == 'x') mode = 0;
+```
+
+```C
+child = fork();
+	if (child == 0) {
+		if (mode) prctl(PR_SET_PDEATHSIG, SIGHUP);
+			chdir(namafolder);
+```
+
+- Diberikan program daemon agar program berjalan di background
+
+```C
+pid_t pid, sid;
+	pid = fork();
+	if (pid < 0) exit(EXIT_FAILURE);
+	if (pid > 0) exit(EXIT_SUCCESS);
+	umask(0);
+	sid = setsid();
+	if (sid < 0) exit(EXIT_FAILURE);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+```
+
+- Generate program killer dalam bentuk bash, dengan command fopen untuk membuat file baru dengan command w, dan command printf untuk menuliskan source code killer. Kemudian memanggil fungsi exec dan fork lagi untuk mengganti hak akses file tersebut menggunakan command chmod u+x killer.sh, yang berarti user dapat mengeksekusi file tersebut.
+
+```C
+void generateKiller(int mode) {
+	FILE* killer;
+	killer = fopen("killer.sh", "w");
+	fprintf(killer, "#!/bin/bash\nkill %d\necho \'Killed program.\'\nrm \"$0\"", getpid());
+	fclose(killer);
+	pid_t child = fork();
+	if (child == 0) {
+		execl("/bin/chmod", "chmod", "u+x", "killer.sh", NULL);
+	}
+	int status;
+	while(wait(&status) > 0);
+}
+```
+
+- Untuk penamaan folder didapatkan dengan memanggil fungsi localtime dari library time.h lalu disimpan sebagai char ke variable namafolder dengan bantuan fungsi sprintf dari library string.h.
+
+```C
+  time_t t;
+	time(&t);
+	struct tm* lt = localtime(&t);
+	char namafolder[100];
+	sprintf(namafolder, "%d-%02d-%02d_%02d:%02d:%02d", lt->tm_year + 1900, lt->tm_mon+ 1, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+	}
+```
+
+- Setelah itu menggunakan fork dan exec untuk membuat folder dengan nama dari variable namafolder yang dilakukan setiap 40 detik, dapat digunakan fungsi sleep(40)
+
+```C
+pid_t child = fork();
+pid_t child_2;
+if (child == 0) {
+  execl("/bin/mkdir", "mkdir", namafolder, NULL);
+sleep(40);
+```
+
+- Untuk mendownload gambar digunakan fungsi fork dan exec untuk memanggil fungsi wget, dengan format untuk mendapatkan timestamp sama seperti di penamaan folder sebelumnya. Sebelum menjalankan perintah tersebut, harus memanggil fungsi chdir(namafolder) agar dapat masuk ke folder tersebut. Karena diharuskan download 10 gambar, maka digunakan foor loop dengan interasi sebanyak 10 kali, dengan sleep (5) untuk download setiap gambarnya
+
+```C
+chdir(namafolder);
+int i;
+for (i = 0; i < 10; i++) {
+	time_t t2;
+	time(&t2);
+	struct tm* lt2 = localtime(&t2);
+	char url[100], name[100];
+	sprintf(url, "https://picsum.photos/%ld", (t2 % 1000) + 50);
+	sprintf(name, "%d-%02d-%02d_%02d:%02d:%02d", lt2->tm_year + 1900, lt2->tm_m+ 1, lt2->tm_mday, lt2->tm_hour, lt2->tm_min, lt2->tm_sec);
+	pid_t child2 = fork();
+	if (child2 == 0) {
+		execl("/usr/bin/wget", "wget", url, "-O", name, "-o", "/dev/null", NULL);
+		exit(EXIT_SUCCESS);
+	}
+	sleep(5);
+}
+```
+
+- Setelah keluar dari loop (selesai mendownload 10 gambar), maka program akan memanggil fungsi statustxt() untuk membuat file bernama status.txt yang isinya adalah "Download Success" namun dienkrip dengan teknik Caesar Cipher dengan shift 5. Digunakan fungsi fopen untuk membuat file "status.txt" dan command "w" untuk "write" lalu fprintf untuk menulis isi dari file tersebut, lalu jangan lupa fclose
+
+```C
+void statustxt(){
+	char msg[100] = "Download Success", arr;
+	for(int j = 0; j < 16 ; j++){
+		arr = msg[j];
+		if(arr >= 'a' && arr <= 'z'){
+			arr+=5;
+			if(arr > 'z') arr = arr - 'z' + 'a' - 1;
+			msg[j] = arr;
+		}else if(arr >= 'A' && arr <= 'Z'){
+			arr+=5;
+			if(arr > 'Z') arr = arr - 'Z' + 'A' - 1;
+			msg[j] = arr;
+		}
+	}
+	FILE *tulis;
+	tulis = fopen("status.txt", "w");
+	fprintf(tulis, "%s", msg);
+	fclose(tulis);
+}
+
+statustxt();
+```
+
+- Setelah selesai membuat status.txt, maka program melakukan zip folder tadi dengan nama yang sama. Untuk mendapatkan nama folder, digunakan fungsi sprintf(namazip, "%s".zip", namafolder). Karena harus melakukan zip maka harus berpindah ke direktori parent(keluar) dengan command chdir(".."). Dan kemudian command rm -rf agar folder sebelumnya beserta isinya dihapus
+
+```C
+int status2;
+
+while(wait(&status2) > 0);
+chdir("..");
+char namazip[150];
+sprintf(namazip, "%s.zip", namafolder);
+
+pid_t child3 = fork();
+if (child3 == 0) {
+	execl("/usr/bin/zip", "zip", "-r", namazip, namafolder, NULL);
+}
+int status3;
+while (wait(&status3) > 0);
+execl("/bin/rm", "rm", "-rf", namafolder, NULL);
+```
+
+- Pertama kita compile soal3.c lalu kita run dalam mode "-z"
+  <br>
+  <img src="Dokumentasi/Soal 3/1.png">
+
+- Berikut adalah tampilan saat program berjalan, terdapat program bash "killer" dan program masih terus mendownload gambar
+  <br>
+  <img src="Dokumentasi/Soal 3/2.png">
+
+- Lalu saat kita jalankan program bash tersebut setelah beberapa menit
+  <br>
+  <img src="Dokumentasi/Soal 3/4.png">
+
+- Berikut adalah tampilan list folder, dapat dilihat program telah berhasil membuat 1 folder yang sudah di zip yang artinya folder tersebut telah berisi 10 gambar dan status.txt dan 1 folder yang belum mendownload 10 gambar sehingga masih dalam bentuk folder. Dan juga program bash telah menghapus dirinya sendiri setelah dijalankan.
+  <br>
+  <img src="Dokumentasi/Soal 3/5.png">
+
+- Ini adalah isi dari folder yang sudah dizip oleh program, dapat dilihat terdapat 10 gambar dan file status.txt yang isinya adalah "Download Success" yang sudah dienkrip dengan teknik Caesar Cipher dengan shift 5
+  <br>
+  <img src="Dokumentasi/Soal 3/6.png">
+
+- Lalu kita mencoba mode kedua yaitu "-x"
+  <br>
+  <img src="Dokumentasi/Soal 3/7.png">
+
+- ini adalah tampilan saat program berjalan, program telah mendownload 4 gambar
+  <br>
+  <img src="Dokumentasi/Soal 3/8.png">
+
+- Lalu saya hentikan proses tersebut dengan menjalankan program killer
+  <br>
+  <img src="Dokumentasi/Soal 3/9.png">
+
+- Setelah beberapa saat saya cek, program tersebut masih menjalankan tugasnya sampai mendownload 10 gambar dan membuat file status.txt
+  <br>
+  <img src="Dokumentasi/Soal 3/10.png">
+
+- Setelah itu saya cek apakah program saya masih berjalan atau tidak dengan menggunakan command "ps -aux | grep soal3", ternyata program telah selesai dimatikan
+  <br>
+  <img src="Dokumentasi/Soal 3/11.png">
