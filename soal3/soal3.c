@@ -72,7 +72,6 @@ int main(int argc, char* argv[]) {
 		sprintf(namafolder, "%d-%02d-%02d_%02d:%02d:%02d", lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 
 		pid_t child = fork();
-		pid_t child_2;
 		if (child == 0) {
 			execl("/bin/mkdir", "mkdir", namafolder, NULL);
 		}
