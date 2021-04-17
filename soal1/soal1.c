@@ -118,9 +118,9 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
-  /* close(STDIN_FILENO);
+  close(STDIN_FILENO);
   close(STDOUT_FILENO);
-  close(STDERR_FILENO); */
+  close(STDERR_FILENO);
 
     chdir("/home/kali/SISOP/modul_2/shift");
     while(1){
