@@ -265,6 +265,10 @@ void hapus(){
   <br>
   <img src="Dokumentasi/soal 1/6.png">
 
+## Kendala yang dihadapi
+
+Pada awalnya saya bingung kenapa jam di aplikasi "clock" linux saya dan localtime linux saya berbeda. Sehingga pada saat menjalankan program, rumus pada bagian jam harus dikurangi 11 agar sesuai dengan jam saya. Ternyata localtime saya belum berubah meskipun saya sudah mengubah settingan pada aplikasi "clock" sehingga saya ganti localtime saya sehingga program dapat berjalan sesuai keinginan.
+
 # Soal2
 
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
@@ -563,6 +567,10 @@ nama: ava
 umur: 6
 ```
 
+## Kendala yang dihadapi
+
+Sempat kesusahan untuk mengola string pada file yang ada, karena harus mengambil sub-string dari string yang ada. Namun dapat terselesaikan dengan bantuan library <string.h>
+
 # Soal3
 
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program.
@@ -759,3 +767,7 @@ execl("/bin/rm", "rm", "-rf", namafolder, NULL);
 - Setelah itu saya cek apakah program saya masih berjalan atau tidak dengan menggunakan command "ps -aux | grep soal3", ternyata program telah selesai dimatikan
   <br>
   <img src="Dokumentasi/Soal 3/11.png">
+
+  ## Kendala yang dihadapi
+
+  Sama seperti pada soal 2 sempat salah waktu pada linux saya, sehingga penamaan dan pembuatan file maupun folder sempat salah. Namun sudah teratasi dengan mengganti localtime linux saya.
