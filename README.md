@@ -248,22 +248,22 @@ void hapus(){
 
 - pertama kita compile dan run soal1.c
   <br>
-  <img src="Dokumentasi/soal 1/1.png">
+  <img src="Dokumentasi/Soal 1/1.png">
 - tampilan awal
   <br>
-  <img src="Dokumentasi/soal 1/2.png">
+  <img src="Dokumentasi/Soal 1/2.png">
 - Lalu kita set waktu linux kita ke tanggal 9 April 2021 jam 16:21:59 WIB
   <br>
-  <img src="Dokumentasi/soal 1/3.png">
+  <img src="Dokumentasi/Soal 1/3.png">
 - Program berjalan dan berikut adalah hasil tampilan foldernya
   <br>
-  <img src="Dokumentasi/soal 1/4.png">
+  <img src="Dokumentasi/Soal 1/4.png">
 - Setelah itu kita set waktu linux kita ke tanggal yang sama tapi jam 22:21:59 WIB
   <br>
-  <img src="Dokumentasi/soal 1/5.png">
+  <img src="Dokumentasi/Soal 1/5.png">
 - Program berhasil berjalan dan berikut adalah hasil tampilan terbaru
   <br>
-  <img src="Dokumentasi/soal 1/6.png">
+  <img src="Dokumentasi/Soal 1/6.png">
 
 ## Kendala yang dihadapi
 
