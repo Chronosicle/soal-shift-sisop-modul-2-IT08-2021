@@ -9,6 +9,7 @@
 #include <string.h>
 #include <zip.h>
 #include <wait.h>
+#include <dirent.h>
 
 void download(char *link, char *tujuan){
   pid_t id;
@@ -87,6 +88,44 @@ void copy(char *asal, char *tujuan){
   }
 }
 
+void hapus_file(char *source){
+  char nama_file[40]; int kondisi;
+  sprintf(nama_file, "%s", source);
+  
+  pid_t id;
+  id = fork();
+  if(id == 0){
+    char *argv[] = {"rm", nama_file};
+    execv("/bin/rm", argv);
+    exit(EXIT_SUCCESS);
+  }else if(id > 0){
+    while(wait(&kondisi) > 0);
+  }
+}
+
+void check(char *source){
+  char nama_file[40];
+  sprintf(nama_file, "%s", source);
+
+  DIR *folder = opendir(source);
+  if(folder){
+    printf("ini folder");
+  }else{
+    int count = strlen(nama_file);
+    if(nama_file[count-3] != 'j' && nama_file[count-2] != 'p' && nama_file[count-3] != 'g'){
+      hapus_file(nama_file);
+    }else{
+      printf("ini jpg");
+    }
+    /* char *token;
+    token = strstr(source, ".jpg");
+    if(token == NULL){
+      hapus_file(nama_file);
+    } */
+  }
+  closedir(folder);
+} 
+
 int main() {
     struct tm ultah = {0, 22, 22, 9, 3, 121};
     time_t ulangtahun = mktime(&ultah);
@@ -122,36 +161,46 @@ int main() {
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
 
-    chdir("/home/kali/SISOP/modul_2/shift");
-    while(1){
-      time_t now = time(NULL);
-      double beda = difftime(ulangtahun, now);
-      if(beda > 0 && beda < 21600){
-        buat_folder(musik);
-        download(link_musik, hasil1);
-        extract(hasil1);
-        copy("MUSIK/.", musik);
+  chdir("/home/kali/SISOP/modul_2/shift");
+  while(1){
+    time_t now = time(NULL);
+    double beda = difftime(ulangtahun, now);
+    if(beda > 0 && beda == 21600){
+      buat_folder(musik);
+      download(link_musik, hasil1);
+      extract(hasil1);
+      copy("MUSIK/.", musik);
 
-        buat_folder(film);
-        download(link_film, hasil2);
-        extract(hasil2);
-        copy("FILM/.", film);
+      buat_folder(film);
+      download(link_film, hasil2);
+      extract(hasil2);
+      copy("FILM/.", film);
 
-        buat_folder(foto);
-        download(link_foto, hasil3);
-        extract(hasil3);
-        copy("FOTO/.", foto);
-        break;
+      buat_folder(foto);
+      download(link_foto, hasil3);
+      extract(hasil3);
+      struct dirent *cek;
+      DIR *folder = opendir("FOTO");
+      if(!folder) exit(EXIT_FAILURE);
+      chdir("FOTO");
+      while(cek = readdir(folder)){
+        if(strcmp(cek->d_name, ".") != 0 && strcmp(cek->d_name, "..") != 0){
+          check(cek->d_name);
+        }
       }
+      chdir("..");
+      copy("FOTO/.", foto);
+      break;
     }
+  }
     
-    while(1){
-      time_t now = time(NULL);
-      double beda = difftime(ulangtahun, now);
-      if(beda < 1 && beda > -1){
-        zip(musik, film, foto);
-        hapus();
-        break;
-      }
+  while(1){
+    time_t now = time(NULL);
+    double beda = difftime(ulangtahun, now);
+    if(beda < 1 && beda > -1){
+      zip(musik, film, foto);
+      hapus();
+      break;
     }
+  }
 }
