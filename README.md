@@ -347,6 +347,241 @@ Loba sangat mengapresiasi bantuanmu, minggu depan ia akan mentraktir makan malam
 - Tidak boleh menggunakan fungsi system(), mkdir(), dan rename().
 - Menggunakan fork dan exec.
 
+# Proses Pengerjaan Soal 2
+
+- Fungsi int main, pertama kita deklarasikan nama zip yang akan diproses dan tujuan folder yang akan dibuat. chdir untuk mengubah current working directorynya, lalu terdapat struct dirent dengan nama variable cek dan tipe DIR dengan nama yaitu "folder" dan membuka isi dari folder tujuan yaitu folder petshop. Lalu di cek apakah folder tersebut ada atau tidak, jika ada maka akan dilanjutkan ke proses selanjutnya. jika tidak maka program akan selesai.
+
+- Lalu terdapat while loop untuk mengecek setiap file yang ada di folder petshop. Jika nama file tersebut valid maka akan dilanjutkan ke proses selanjutnya.
+
+```C
+int main(){
+    char source[10] = "pets.zip";
+    char tujuan[10] = "petshop";
+    chdir("/home/kali/SISOP/modul_2/shift");
+    extract(source, tujuan);
+    struct dirent *cek;
+    DIR *folder = opendir(tujuan);
+    if(!folder){
+        exit(EXIT_FAILURE);
+    }
+    chdir("petshop");
+    while (cek = readdir(folder)){
+        //mengecek apakah nama filenya valid
+        if(strcmp(cek->d_name, ".") != 0 && strcmp(cek->d_name, "..") != 0){
+            check(cek->d_name);
+        }
+    }
+    return 0;
+}
+```
+
+- Fungsi extract/unzip untuk meng-extract pets.zip ke folder petshop
+
+```C
+void extract(char *asal, char *tujuan){
+    pid_t id_1; int kondisi;
+    id_1 = fork();
+    //mengunzip pets.zip ke folder petshop(tujuan)
+    if(id_1 == 0){
+        char *argv[5] = {"unzip", asal, "-d", tujuan};
+        execv("/usr/bin/unzip", argv);
+        exit(EXIT_SUCCESS);
+    }else if(id_1 > 0){
+        while(wait(&kondisi) > 0);
+    }
+}
+```
+
+- Fungsi hapus, untuk menghapus folder yang tidak penting beserta isinya
+
+```C
+void hapus(char *nama){
+    char tujuan[20];
+    sprintf(tujuan, "%s/", nama);
+    pid_t id_2; int kondisi;
+    id_2 = fork();
+    if(id_2 == 0){
+        //menghapus folder yang tidak penting
+        char *argv[4] = {"rm", "-rf", tujuan};
+        execv("/bin/rm", argv);
+        exit(EXIT_SUCCESS);
+    }else if(id_2 > 0){
+        while(wait(&kondisi) > 0);
+    }
+}
+```
+
+- Fungsi buat_folder, untuk membuat folder berdasarkan jenis hewan
+
+```C
+void buat_folder(char *nama){
+    char tujuan[40];
+    sprintf(tujuan, "%s", nama);
+    pid_t id_3; int kondisi;
+    DIR *folder = opendir(nama);
+    if(folder){
+        return;
+    }
+    id_3 = fork();
+    if(id_3 == 0){
+        //membuat folder baru berdasarkan jenis hewan
+        char *argv[3] = {"mkdir", tujuan};
+        execv("/bin/mkdir", argv);
+        exit(EXIT_SUCCESS);
+    }else if(id_3 > 0){
+        while(wait(&kondisi) > 0);
+    }
+}
+```
+
+- Fungsi copy, untuk mengcopy file ke folder sesuai dengan jenis hewan nya
+
+```C
+void copy(char *folder, char *asal, char *tujuan){
+    char source[30];int kondisi;
+    sprintf(source, "%s", asal);
+    char destination[40];
+    sprintf(destination, "%s/%s.jpg", folder, tujuan);
+    pid_t id_4;
+    id_4 = fork();
+    //mengcopy file ke folder sesuai jenis hewan nya
+    if(id_4 == 0){
+        char *argv[4] = {"cp", source, destination};
+        execv("/bin/cp", argv);
+        exit(EXIT_SUCCESS);
+    }else if(id_4 > 0){
+        while(wait(&kondisi) > 0);
+    }
+}
+```
+
+- Fungsi keterangan, untuk memberi keterangan di setiap folder mengenai nama hewan dan umur hewan yang ada di folder tersebut. Menulis file dapat menggunakan bantuan fopen dan fprintf lalu di close dengan fclose
+
+```C
+void keterangan (char *folder, char *nama_hewan, char *umur_hewan){
+    char keterangan[50];
+    sprintf(keterangan, "%s/keterangan.txt", folder);
+    pid_t id_5;int kondisi;
+    id_5 = fork();
+    if(id_5 == 0){
+        FILE *tulis;
+        tulis = fopen(keterangan, "a");
+        fprintf(tulis, "nama: %s\numur: %s\n\n", nama_hewan, umur_hewan);
+        fclose(tulis);
+        exit(EXIT_SUCCESS);
+    }else if(id_5 > 0){
+        while(wait(&kondisi) > 0);
+    }
+}
+```
+
+- Fungsi Cek, untuk mengecek apakah file tersebut penting atau tidak, jika tidak maka akan dihapus. Untuk mendapatkan jenis hewan, nama hewan dan umur hewan, kita menggunakan fungsi dari library.h yaitu strtok. Lalu menyimpan hasil nya ke dalam array ke jenis_nama_umur. array ke [0] untuk jenis hewan, [1] untuk nama hewan dan [2] untuk umur hewan. Namun hasil dari umur hewan belum benar 100% karena terdapat ".jpg" oleh karena itu kita menggunakan fungsi dari strstr yaitu mencari string dari string lainnya. Lalu hasilnya akan dikurangi dengan umur hewan.
+
+- Lalu kita buat folder sesuai dengan jenis hewan, mengcopy file ke folder sesuai dengan jenis hewan, dan memberi keterangan berisi nama dan umur hewan di setiap folder. Setelah while loop selesai maka harus closedir untuk menutup folder.
+
+```C
+void check(char *source){
+    char *nama_asal[40];
+    sprintf(nama_asal, "%s", source);
+    DIR *folder = opendir(source);
+    //menghapus folder yang tidak penting
+    if(folder){
+        hapus(nama_asal);
+    }else{
+        char *token, *jenis_nama_umur[3];
+        token = strtok(source, ";_");
+        //fungsi perulangan jika terdapat lebih dari 1 hewan berdasarkan nama filenya
+        while(token != NULL){
+            //mendapatkan jenis, nama, umur hewan dengan fungsi strtok
+            int i = 0;
+            while(i<3){
+                jenis_nama_umur[i] = token;
+                token = strtok(NULL, ";_");
+                i++;
+            }
+            char *nama_folder = jenis_nama_umur[0];
+            char *nama_hewan = jenis_nama_umur[1];
+            char *umur_hewan = jenis_nama_umur[2];
+            char *jpg;
+            jpg = strstr(umur_hewan, ".jpg");
+            if(jpg != NULL){
+                int counter = jpg - umur_hewan;
+                sprintf(umur_hewan, "%.*s", counter, umur_hewan);
+            }
+            buat_folder(nama_folder);
+            copy(nama_folder, nama_asal, nama_hewan);
+            keterangan(nama_folder, nama_hewan, umur_hewan);
+        }
+    }
+    closedir(folder);
+}
+```
+
+- Tampilan awal list folder
+  <br>
+  <img src="Dokumentasi/Soal 2/1.png">
+
+- Compile dan Run program soal2.c
+  <br>
+  <img src="Dokumentasi/Soal 2/2.png">
+
+- hasil extract dari pets.zip ke folder petshop. Sekaligus membuat folder sesuai dengan jenis hewan yang ada
+  <br>
+  <img src="Dokumentasi/Soal 2/3.png">
+
+- Tampilan list folder dari petshop
+  <br>
+  <img src="Dokumentasi/Soal 2/4.png">
+
+- Isi dari keterangan.txt dari folder petshop/cat
+
+```C
+nama: oreo
+umur: 7
+nama: angmry
+umur: 7
+nama: jasper
+umur: 10
+nama: tilly
+umur: 6
+nama: simba
+umur: 4
+nama: atlas
+umur: 0.6
+nama: nala
+umur: 4
+nama: reggie
+umur: 8
+nama: luna
+umur: 4
+nama: remi
+umur: 8
+nama: ellie
+umur: 3
+nama: tucker
+umur: 3
+nama: koda
+umur: 11
+nama: sus
+umur: 6
+nama: chester
+umur: 5
+nama: milo
+umur: 0.5
+nama: echo
+umur: 7
+nama: chloe
+umur: 4
+nama: neko
+umur: 3
+nama: ava
+umur: 6
+```
+
+## Kendala yang dihadapi
+
+Sempat kesusahan untuk mengola string pada file yang ada, karena harus mengambil sub-string dari string yang ada. Namun dapat terselesaikan dengan bantuan library <string.h>
+
 # Soal3
 
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program.
