@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
-void buat_folder(char *nama);
 void copy(char *folder, char *asal, char *tujuan);
+void buat_folder(char *nama);
 void keterangan (char *folder, char *nama_hewan, char *umur_hewan);
 
 int main(){
