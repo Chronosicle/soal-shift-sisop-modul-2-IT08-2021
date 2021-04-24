@@ -22,7 +22,7 @@ void generateKiller(int mode) {
 	while(wait(&status) > 0);
 }
 
-void statustxt(){
+void statustxt(char *nama_file){
 	char msg[100] = "Download Success", arr;
 	for(int j = 0; j < 16 ; j++){
 		arr = msg[j];
@@ -37,7 +37,7 @@ void statustxt(){
 		}
 	}
 	FILE *tulis;
-	tulis = fopen("status.txt", "w");
+	tulis = fopen(nama_file, "w");
 	fprintf(tulis, "%s", msg);
 	fclose(tulis);
 }
@@ -72,48 +72,49 @@ int main(int argc, char* argv[]) {
 		sprintf(namafolder, "%d-%02d-%02d_%02d:%02d:%02d", lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 
 		pid_t child = fork();
+		pid_t child_2;
 		if (child == 0) {
-			execl("/bin/mkdir", "mkdir", namafolder, NULL);
+			char *argv[] = {"mkdir", namafolder, NULL};
+			execv("/bin/mkdir", argv);
 		}
-		int status;
-		wait(&status);
 
 		child = fork();
 		if (child == 0) {
 			if (mode) prctl(PR_SET_PDEATHSIG, SIGHUP);
-			chdir(namafolder);
-			
-			int i;
-			for (i = 0; i < 10; i++) {
-				time_t t2;
-				time(&t2);
-				struct tm* lt2 = localtime(&t2);
-				char url[100], name[100];
-				sprintf(url, "https://picsum.photos/%ld", (t2 % 1000) + 50);
-				sprintf(name, "%d-%02d-%02d_%02d:%02d:%02d", lt2->tm_year + 1900, lt2->tm_mon + 1, lt2->tm_mday, lt2->tm_hour, lt2->tm_min, lt2->tm_sec);
-				pid_t child2 = fork();
-				if (child2 == 0) {
+	
+			for (int i = 0; i < 10; i++) {
+				child = fork();
+				if(child == 0){
+					time_t t2;
+					time(&t2);
+					struct tm* lt2 = localtime(&t2);
+					char url[100], name[100], new_time[80];
+					sprintf(url, "https://picsum.photos/%ld", (t2 % 1000) + 50);
+                    sprintf(new_time, "%d-%02d-%02d_%02d:%02d:%02d", lt2->tm_year + 1900, lt2->tm_mon + 1, lt2->tm_mday, lt2->tm_hour, lt2->tm_min, lt2->tm_sec);
+					sprintf(name, "%s/%s",namafolder, new_time);
+					
+					// char *argv[] = {"wget", url, "-O", name, NULL};
 					execl("/usr/bin/wget", "wget", url, "-O", name, "-o", "/dev/null", NULL);
-					exit(EXIT_SUCCESS);
+					execv("/usr/bin/wget", argv);
 				}
 				sleep(5);
 			}
-			statustxt();
+			while(wait(NULL) > 0);
+			child = fork();
+			if(child == 0){
+                char name[100];
+                strcpy(name, namafolder);
+                strcat(name, "/status.txt");
+				statustxt(name);
+				char namazip[150];
+				sprintf(namazip, "%s.zip", namafolder);
 
-			int status2;
-
-			while(wait(&status2) > 0);
-			chdir("..");
-			char namazip[150];
-			sprintf(namazip, "%s.zip", namafolder);
-
-			pid_t child3 = fork();
-			if (child3 == 0) {
-				execl("/usr/bin/zip", "zip", "-r", namazip, namafolder, NULL);
+				char *argv[] = {"zip", "-r", namazip, namafolder, NULL};
+				execv("/bin/zip", argv);
 			}
-			int status3;
-			while (wait(&status3) > 0);	
-			execl("/bin/rm", "rm", "-rf", namafolder, NULL);
+			while(wait(NULL) != child);
+			char *argv[] = {"rm", "-r", namafolder, NULL};
+			execv("/bin/rm", argv);
 		}
 		sleep(40);
 	}
