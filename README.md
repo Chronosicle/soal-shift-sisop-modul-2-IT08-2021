@@ -265,6 +265,56 @@ void hapus(){
   <br>
   <img src="Dokumentasi/Soal 1/6.png">
 
+## Revisi
+
+Pada awalnya program saya memindahkan semua isi dari FOTO.zip ke folder Pyoto, ternyata yang diminta soal hanya file yang berekstensi ".jpg" sehingga saya merevisi sedikit codingan saya. Berikut adalah tambahan codingan yang saya berikan :
+
+- Fungsi check, untuk mengecek apakah file tersebut berekstensi ".jpg" atau tidak, jika tidak, maka file tersebut akan dihapus dengan memanggil fungsi hapus_file. Jika iya, maka file tersebut akan dibiarkan.
+
+```C
+void check(char *source){
+  char nama_file[40];
+  sprintf(nama_file, "%s", source);
+
+  DIR *folder = opendir(source);
+  if(folder){
+    printf("ini folder");
+  }else{
+    int count = strlen(nama_file);
+    if(nama_file[count-3] != 'j' && nama_file[count-2] != 'p' && nama_file[count-3] != 'g'){
+      hapus_file(nama_file);
+    }else{
+      printf("ini jpg");
+    }
+    /* char *token;
+    token = strstr(source, ".jpg");
+    if(token == NULL){
+      hapus_file(nama_file);
+    } */
+  }
+  closedir(folder);
+}
+```
+
+- Fungsi hapus_file, berguna untuk menghapus file yang tidak berekstensi ".jpg"
+
+```C
+void hapus_file(char *source){
+  char nama_file[40]; int kondisi;
+  sprintf(nama_file, "%s", source);
+
+  pid_t id;
+  id = fork();
+  if(id == 0){
+    char *argv[] = {"rm", nama_file};
+    execv("/bin/rm", argv);
+    exit(EXIT_SUCCESS);
+  }else if(id > 0){
+    while(wait(&kondisi) > 0);
+  }
+}
+```
+
 ## Kendala yang dihadapi
 
 Pada awalnya saya bingung kenapa jam di aplikasi "clock" linux saya dan localtime linux saya berbeda. Sehingga pada saat menjalankan program, rumus pada bagian jam harus dikurangi 11 agar sesuai dengan jam saya. Ternyata localtime saya belum berubah meskipun saya sudah mengubah settingan pada aplikasi "clock" sehingga saya ganti localtime saya sehingga program dapat berjalan sesuai keinginan.
@@ -767,6 +817,30 @@ execl("/bin/rm", "rm", "-rf", namafolder, NULL);
 - Setelah itu saya cek apakah program saya masih berjalan atau tidak dengan menggunakan command "ps -aux | grep soal3", ternyata program telah selesai dimatikan
   <br>
   <img src="Dokumentasi/Soal 3/11.png">
+
+  ## Revisi
+
+  Untuk mode x, program saya berjalan dengan benar. Namun untuk mode z terdapat kesalahan saat sudah ada 2 folder zip lebih, file yang didownload ditempatkan di luar folder bukan di dalam folder yang seharusnya. Ternyata karena pada saat tertentu ,program kita akan mendownload 2 file bersamaan dan ditaruh di folder yang berbeda. Nah karena saya menggunakan chdir dengan isi variable, otomatis variable tersebut hanya menyimpan 1 folder saja sehingga folder satunya terlewati untuk seterusnya. Sehingga file yang didownload ditempatkan di lokasi yang salah. Oleh karena itu saya tidak menggunakan chdir, dan menggantinya pada saat proses download langsung saya berikan path nama folder yang harus dituju. Berikut adalah perubahan codenya :
+
+  ```C
+  for (int i = 0; i < 10; i++) {
+  	child = fork();
+  	if(child == 0){
+  		time_t t2;
+  		time(&t2);
+  		struct tm* lt2 = localtime(&t2);
+  		char url[100], name[100], new_time[80];
+  		sprintf(url, "https://picsum.photos/%ld", (t2 % 1000) + 50);
+          sprintf(new_time, "%d-%02d-%02d_%02d:%02d:%02d", lt2->tm_year 1lt2->tm_mon + 1, lt2->tm_mday, lt2->tm_hour, lt2->tm_minlt2->tm_sec);
+  		sprintf(name, "%s/%s",namafolder, new_time);
+
+  		// char *argv[] = {"wget", url, "-O", name, NULL};
+  		execl("/usr/bin/wget", "wget", url, "-O", name, "-o", "/dev/null", NULL);
+  		execv("/usr/bin/wget", argv);
+  	}
+  	sleep(5);
+  }
+  ```
 
   ## Kendala yang dihadapi
 
