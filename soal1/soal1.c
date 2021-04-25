@@ -112,16 +112,11 @@ void check(char *source){
     printf("ini folder");
   }else{
     int count = strlen(nama_file);
-    if(nama_file[count-3] != 'j' && nama_file[count-2] != 'p' && nama_file[count-3] != 'g'){
+    if(nama_file[count-3] != 'j'){
       hapus_file(nama_file);
     }else{
       printf("ini jpg");
     }
-    /* char *token;
-    token = strstr(source, ".jpg");
-    if(token == NULL){
-      hapus_file(nama_file);
-    } */
   }
   closedir(folder);
 } 

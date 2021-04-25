@@ -281,16 +281,11 @@ void check(char *source){
     printf("ini folder");
   }else{
     int count = strlen(nama_file);
-    if(nama_file[count-3] != 'j' && nama_file[count-2] != 'p' && nama_file[count-3] != 'g'){
+    if(nama_file[count-3] != 'j'){
       hapus_file(nama_file);
     }else{
       printf("ini jpg");
     }
-    /* char *token;
-    token = strstr(source, ".jpg");
-    if(token == NULL){
-      hapus_file(nama_file);
-    } */
   }
   closedir(folder);
 }
@@ -314,6 +309,11 @@ void hapus_file(char *source){
   }
 }
 ```
+
+- Isi folder FOTO dan Pyoto setelah revisi sudah menjadi .jpg semua
+  <br>
+  <img src="Dokumentasi/Soal 1/revisi 1.png">
+  <img src="Dokumentasi/Soal 1/revisi 2.png">
 
 ## Kendala yang dihadapi
 
@@ -802,6 +802,10 @@ execl("/bin/rm", "rm", "-rf", namafolder, NULL);
   	sleep(5);
   }
   ```
+
+- Program sudah bisa mendownload dan menempatkan hasil download di folder yang seharusnya
+  <br>
+  <img src="Dokumentasi/Soal 3/revisi 1.png">
 
   ## Kendala yang dihadapi
 
